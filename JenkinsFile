@@ -4,7 +4,7 @@ pipeline {
     maven 'maven'
   }
   environment {
-    SONARQUBE_TOKEN = credentials('carles-token')
+    SONARQUBE_TOKEN = credentials('sonartoken')
   }
   stages {
     stage ('scm') {
