@@ -35,7 +35,7 @@ pipeline {
     stage ('build docker image') {
       steps {
         sh ''' 
-        docker build -t s5carles/carles-project:v1
+        docker build -t s5carles/carles-project:v1 .
         docker run -d -P s5carles/carles-project:v1
         docker ps
         '''
