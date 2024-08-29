@@ -5,7 +5,6 @@ pipeline {
   }
   environment {
     SONARQUBE_TOKEN = credentials('sonartoken')  // SonarQube token from Jenkins credentials
-    DOCKERHUB_CREDENTIALS = credentials('carles-docker-hub')  // Docker Hub credentials from Jenkins credentials
     DOCKERHUB_USERNAME = 's5carles'  // Your Docker Hub username
     IMAGE_NAME = 'carles-project'  // Docker image name
   }
@@ -44,9 +43,11 @@ pipeline {
     }
     stage ('Push Docker Image to Docker Hub') {
       steps {
-        script {
-          sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-          sh "docker push ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v1"
+        withCredentials([string(credentialsId: 'carles-docker-hub', variable: 'DOCKERHUB_TOKEN')]) {
+          sh '''
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker push ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v1
+          '''
         }
       }
     }
