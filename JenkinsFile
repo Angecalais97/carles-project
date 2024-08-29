@@ -4,7 +4,10 @@ pipeline {
     maven 'maven'
   }
   environment {
-    SONARQUBE_TOKEN = credentials('sonartoken')
+    SONARQUBE_TOKEN = credentials('sonartoken')  // SonarQube token from Jenkins credentials
+    DOCKERHUB_CREDENTIALS = credentials('carles-docker-hub')  // Docker Hub credentials from Jenkins credentials
+    DOCKERHUB_USERNAME = 's5carles'  // Your Docker Hub username
+    IMAGE_NAME = 'carles-project'  // Docker image name
   }
   stages {
     stage ('scm') {
@@ -22,7 +25,7 @@ pipeline {
     }
     stage ('SonarQube Analysis') {
       steps {
-        withSonarQubeEnv('let-do-it') { // SonarQube scanner name in Jenkins configuration
+        withSonarQubeEnv('let-do-it') {  // SonarQube scanner name in Jenkins configuration
           sh '''
           mvn sonar:sonar \
             -Dsonar.projectKey=carles-project \
@@ -32,15 +35,28 @@ pipeline {
         }
       }
     }
-    stage ('build docker image') {
+    stage ('Build Docker Image') {
       steps {
         sh ''' 
-        docker build -t s5carles/carles-project:v1 .
-        docker run -d -P s5carles/carles-project:v1
+        docker build -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v1 .
+        '''
+      }
+    }
+    stage ('Push Docker Image to Docker Hub') {
+      steps {
+        script {
+          sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+          sh "docker push ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v1"
+        }
+      }
+    }
+    stage ('Run Docker Container') {
+      steps {
+        sh ''' 
+        docker run -d -P ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:v1
         docker ps
         '''
       }
     }
   }
 }
-
