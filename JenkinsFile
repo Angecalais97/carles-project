@@ -32,11 +32,12 @@ pipeline {
         }
       }
     }
-    stage ('build,test,compile,package') {
+    stage ('build docker image') {
       steps {
         sh ''' 
-        mvn --version
-        mvn clean package
+        docker build -t s5carles/carles-project:v1
+        docker run -d -P s5carles/carles-project:v1
+        docker ps
         '''
       }
     }
