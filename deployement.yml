@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: carles-project-container
-        image: s5carles/carles-project
+        image: s5carles/carles-project:v1
         ports:
         - containerPort: 80
      
