@@ -4,7 +4,7 @@ pipeline {
     maven 'maven'
   }
   environment {
-    SONARQUBE_TOKEN = credentials('sonartoken')  // SonarQube token from Jenkins credentials
+    SONARQUBE_TOKEN = credentials('sonar-credds')  // SonarQube token from Jenkins credentials
     DOCKERHUB_USERNAME = 's5carles'  // Your Docker Hub username
     IMAGE_NAME = 'carles-project'  // Docker image name
   }
