@@ -1,5 +1,7 @@
 pipeline {
   agent any
+
+
   tools {
     maven 'maven'
   }
@@ -17,7 +19,6 @@ pipeline {
     stage ('build,test,compile,package') {
       steps {
         sh ''' 
-        mvn --version
         mvn clean package
         '''
       }
